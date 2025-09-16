@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  password  String // Will be hashed
+  coupleId  String?
+  couple    Couple?  @relation(fields: [coupleId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Couple {
+  id            String         @id @default(uuid())
+  users         User[]
+  weddingDate   DateTime?
+  todos         Todo[]
+  vendors       Vendor[]
+  budgetItems   BudgetItem[]
+  wishlistItems WishlistItem[]
+  createdAt     DateTime       @default(now())
+}
+
+model Todo {
+  id          String   @id @default(uuid())
+  content     String
+  dueDate     DateTime?
+  isCompleted Boolean  @default(false)
+  coupleId    String
+  couple      Couple   @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+}
+
+model Vendor {
+  id          String   @id @default(uuid())
+  name        String
+  category    String // e.g., "웨딩홀", "스튜디오", "드레스"
+  contact     String?
+  cost        Int?
+  pros        String?
+  cons        String?
+  status      String   @default("고려 중") // e.g., "고려 중", "계약 완료"
+  coupleId    String
+  couple      Couple   @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+}
+
+model BudgetItem {
+  id        String   @id @default(uuid())
+  category  String   // e.g., "스드메", "예물"
+  item      String
+  amount    Int
+  paidBy    String   // e.g., "신랑", "신부", "공동"
+  coupleId  String
+  couple    Couple   @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model WishlistItem {
+  id          String   @id @default(uuid())
+  itemName    String
+  itemUrl     String?  // For Coupang Partners link
+  price       Int?
+  isPurchased Boolean  @default(false)
+  coupleId    String
+  couple      Couple   @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+}
