@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useAuthStore } from '@/lib/store'
 
 export default function ProfilePage() {
@@ -8,16 +8,7 @@ export default function ProfilePage() {
     const [error, setError] = useState('')
     const { user, token, updateUser } = useAuthStore()
 
-    useEffect(() => {
-        if (token) {
-            fetchUserProfile()
-        } else {
-            setError('로그인이 필요합니다.')
-            setIsLoading(false)
-        }
-    }, [token])
-
-    const fetchUserProfile = async () => {
+    const fetchUserProfile = useCallback(async () => {
         try {
             const response = await fetch('/api/users/profile', {
                 headers: {
@@ -37,7 +28,16 @@ export default function ProfilePage() {
         } finally {
             setIsLoading(false)
         }
-    }
+    }, [token, updateUser])
+
+    useEffect(() => {
+        if (token) {
+            fetchUserProfile()
+        } else {
+            setError('로그인이 필요합니다.')
+            setIsLoading(false)
+        }
+    }, [token, fetchUserProfile])
 
     if (isLoading) {
         return (

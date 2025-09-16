@@ -8,6 +8,7 @@ if (!process.env.JWT_SECRET) {
 const JWT_SECRET = process.env.JWT_SECRET
 
 export interface JWTPayload {
+    id: string
     userId: string
     email: string
     coupleId?: string
