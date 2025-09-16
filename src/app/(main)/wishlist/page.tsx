@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useAuthStore } from '@/lib/store'
 import { WishlistItem, CreateWishlistItemData } from '@/types'
 import { getRecommendations, getAllCategories } from '@/lib/recommendations'
@@ -19,16 +19,7 @@ export default function WishlistPage() {
     })
     const { token } = useAuthStore()
 
-    useEffect(() => {
-        if (token) {
-            fetchWishlistItems()
-        } else {
-            setError('로그인이 필요합니다.')
-            setIsLoading(false)
-        }
-    }, [token])
-
-    const fetchWishlistItems = async () => {
+    const fetchWishlistItems = useCallback(async () => {
         try {
             const response = await fetch('/api/wishlist', {
                 headers: {
@@ -48,7 +39,16 @@ export default function WishlistPage() {
         } finally {
             setIsLoading(false)
         }
-    }
+    }, [token])
+
+    useEffect(() => {
+        if (token) {
+            fetchWishlistItems()
+        } else {
+            setError('로그인이 필요합니다.')
+            setIsLoading(false)
+        }
+    }, [token, fetchWishlistItems])
 
     const handleAddItem = async (e: React.FormEvent) => {
         e.preventDefault()

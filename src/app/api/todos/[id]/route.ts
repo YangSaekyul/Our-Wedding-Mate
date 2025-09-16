@@ -1,18 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
-import prisma from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import { requireAuth } from '@/lib/middleware'
 import { UpdateTodoData } from '@/types'
 
-interface RouteParams {
-    params: {
-        id: string
-    }
-}
-
-export async function PATCH(request: NextRequest, { params }: RouteParams) {
+export async function PATCH(
+    request: NextRequest,
+    { params }: { params: Promise<{ id: string }> }
+) {
     try {
         const user = requireAuth(request)
-        const { id } = params
+        const { id } = await params
 
         if (!user.coupleId) {
             return NextResponse.json(
@@ -72,10 +69,13 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
 }
 
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(
+    request: NextRequest,
+    { params }: { params: Promise<{ id: string }> }
+) {
     try {
         const user = requireAuth(request)
-        const { id } = params
+        const { id } = await params
 
         if (!user.coupleId) {
             return NextResponse.json(

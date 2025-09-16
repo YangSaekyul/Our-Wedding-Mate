@@ -23,7 +23,6 @@ model User {
 model Couple {
   id            String         @id @default(uuid())
   users         User[]
-  partner_name  String?
   weddingDate   DateTime?
   todos         Todo[]
   vendors       Vendor[]
@@ -42,10 +41,21 @@ model Todo {
   createdAt   DateTime @default(now())
 }
 
+enum VendorCategory {
+  WEDDING_HALL
+  STUDIO
+  DRESS
+  MAKEUP
+  BOUQUET
+  INVITATION
+  HONEYMOON
+  OTHER
+}
+
 model Vendor {
-  id          String   @id @default(uuid())
+  id          String         @id @default(uuid())
   name        String
-  category    String // e.g., "웨딩홀", "스튜디오", "드레스"
+  category    VendorCategory
   contact     String?
   cost        Int?
   pros        String?

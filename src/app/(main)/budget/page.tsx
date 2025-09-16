@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useAuthStore } from '@/lib/store'
 import { BudgetItem, CreateBudgetItemData } from '@/types'
 
@@ -17,16 +17,7 @@ export default function BudgetPage() {
     })
     const { token } = useAuthStore()
 
-    useEffect(() => {
-        if (token) {
-            fetchBudgetItems()
-        } else {
-            setError('로그인이 필요합니다.')
-            setIsLoading(false)
-        }
-    }, [token])
-
-    const fetchBudgetItems = async () => {
+    const fetchBudgetItems = useCallback(async () => {
         try {
             const response = await fetch('/api/budget', {
                 headers: {
@@ -46,7 +37,16 @@ export default function BudgetPage() {
         } finally {
             setIsLoading(false)
         }
-    }
+    }, [token])
+
+    useEffect(() => {
+        if (token) {
+            fetchBudgetItems()
+        } else {
+            setError('로그인이 필요합니다.')
+            setIsLoading(false)
+        }
+    }, [token, fetchBudgetItems])
 
     const handleAddItem = async (e: React.FormEvent) => {
         e.preventDefault()

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import prisma from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import { requireAuth } from '@/lib/middleware'
 import { DashboardData } from '@/types'
 
@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({
                 success: true,
                 data: {
-                    weddingDate: undefined,
+                    weddingDate: null,
                     totalBudget: 0,
                     spentAmount: 0,
                     remainingBudget: 0,
@@ -55,25 +55,14 @@ export async function GET(request: NextRequest) {
             .reduce((sum, item) => sum + item.amount, 0)
         const remainingBudget = totalBudget - spentAmount
 
-        // Prisma returns nullable fields (e.g. Date | null), convert null -> undefined
-        const mapTodo = (t: any) => ({ ...t, dueDate: t.dueDate ?? undefined })
-        const mapVendor = (v: any) => ({
-            ...v,
-            contact: v.contact ?? undefined,
-            cost: v.cost ?? undefined,
-            pros: v.pros ?? undefined,
-            cons: v.cons ?? undefined,
-        })
-        const mapBudgetItem = (b: any) => ({ ...b })
-
         const dashboardData: DashboardData = {
-            weddingDate: couple.weddingDate ?? undefined,
+            weddingDate: couple.weddingDate,
             totalBudget,
             spentAmount,
             remainingBudget,
-            recentTodos: couple.todos.map(mapTodo),
-            recentVendors: couple.vendors.map(mapVendor),
-            recentBudgetItems: couple.budgetItems.map(mapBudgetItem),
+            recentTodos: couple.todos,
+            recentVendors: couple.vendors,
+            recentBudgetItems: couple.budgetItems,
         }
 
         return NextResponse.json({

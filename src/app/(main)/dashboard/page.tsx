@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { DashboardData } from '@/types'
 import { useAuthStore } from '@/lib/store'
 
@@ -10,16 +10,7 @@ export default function DashboardPage() {
     const [error, setError] = useState('')
     const { token } = useAuthStore()
 
-    useEffect(() => {
-        if (token) {
-            fetchDashboardData()
-        } else {
-            setError('로그인이 필요합니다.')
-            setIsLoading(false)
-        }
-    }, [token])
-
-    const fetchDashboardData = async () => {
+    const fetchDashboardData = useCallback(async () => {
         try {
             const response = await fetch('/api/dashboard', {
                 headers: {
@@ -39,7 +30,16 @@ export default function DashboardPage() {
         } finally {
             setIsLoading(false)
         }
-    }
+    }, [token])
+
+    useEffect(() => {
+        if (token) {
+            fetchDashboardData()
+        } else {
+            setError('로그인이 필요합니다.')
+            setIsLoading(false)
+        }
+    }, [token, fetchDashboardData])
 
     if (isLoading) {
         return (

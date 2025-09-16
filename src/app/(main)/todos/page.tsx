@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useAuthStore } from '@/lib/store'
 import { Todo, CreateTodoData } from '@/types'
 
@@ -11,16 +11,7 @@ export default function TodosPage() {
     const [newTodo, setNewTodo] = useState('')
     const { token } = useAuthStore()
 
-    useEffect(() => {
-        if (token) {
-            fetchTodos()
-        } else {
-            setError('로그인이 필요합니다.')
-            setIsLoading(false)
-        }
-    }, [token])
-
-    const fetchTodos = async () => {
+    const fetchTodos = useCallback(async () => {
         try {
             const response = await fetch('/api/todos', {
                 headers: {
@@ -40,7 +31,16 @@ export default function TodosPage() {
         } finally {
             setIsLoading(false)
         }
-    }
+    }, [token])
+
+    useEffect(() => {
+        if (token) {
+            fetchTodos()
+        } else {
+            setError('로그인이 필요합니다.')
+            setIsLoading(false)
+        }
+    }, [token, fetchTodos])
 
     const handleAddTodo = async (e: React.FormEvent) => {
         e.preventDefault()

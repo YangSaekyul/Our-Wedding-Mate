@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    // Next.js 15에서는 appDir이 기본값이므로 experimental 설정 제거
+    // Next.js의 기본 설정
+    reactStrictMode: true,
+    // 이미지 도메인 설정 (필요한 경우 추가)
+    images: {
+        domains: [],
+    }
 }
 
 module.exports = nextConfig

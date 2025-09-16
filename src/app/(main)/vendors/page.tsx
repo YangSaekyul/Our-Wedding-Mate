@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useAuthStore } from '@/lib/store'
 import { Vendor, CreateVendorData } from '@/types'
 
@@ -20,16 +20,7 @@ export default function VendorsPage() {
     })
     const { token } = useAuthStore()
 
-    useEffect(() => {
-        if (token) {
-            fetchVendors()
-        } else {
-            setError('로그인이 필요합니다.')
-            setIsLoading(false)
-        }
-    }, [token])
-
-    const fetchVendors = async () => {
+    const fetchVendors = useCallback(async () => {
         try {
             const response = await fetch('/api/vendors', {
                 headers: {
@@ -49,7 +40,16 @@ export default function VendorsPage() {
         } finally {
             setIsLoading(false)
         }
-    }
+    }, [token])
+
+    useEffect(() => {
+        if (token) {
+            fetchVendors()
+        } else {
+            setError('로그인이 필요합니다.')
+            setIsLoading(false)
+        }
+    }, [token, fetchVendors])
 
     const handleAddVendor = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -247,8 +247,8 @@ export default function VendorsPage() {
                                         <p className="text-secondary-600">{vendor.category}</p>
                                     </div>
                                     <span className={`px-2 py-1 rounded-full text-sm ${vendor.status === '계약 완료' ? 'bg-green-100 text-green-800' :
-                                            vendor.status === '고려 중' ? 'bg-yellow-100 text-yellow-800' :
-                                                'bg-red-100 text-red-800'
+                                        vendor.status === '고려 중' ? 'bg-yellow-100 text-yellow-800' :
+                                            'bg-red-100 text-red-800'
                                         }`}>
                                         {vendor.status}
                                     </span>
