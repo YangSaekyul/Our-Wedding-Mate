@@ -55,47 +55,25 @@ export async function GET(request: NextRequest) {
             .reduce((sum, item) => sum + item.amount, 0)
         const remainingBudget = totalBudget - spentAmount
 
-        // Map Prisma nullable fields (Date | null, string | null, number | null) to our app types (undefined)
-        const mappedTodos = couple.todos.map(t => ({
-            id: t.id,
-            content: t.content,
-            dueDate: t.dueDate ?? undefined,
-            isCompleted: t.isCompleted,
-            coupleId: t.coupleId,
-            createdAt: t.createdAt,
-        }))
-
-        const mappedVendors = couple.vendors.map(v => ({
-            id: v.id,
-            name: v.name,
-            category: v.category,
+        // Prisma returns nullable fields (e.g. Date | null), convert null -> undefined
+        const mapTodo = (t: any) => ({ ...t, dueDate: t.dueDate ?? undefined })
+        const mapVendor = (v: any) => ({
+            ...v,
             contact: v.contact ?? undefined,
             cost: v.cost ?? undefined,
             pros: v.pros ?? undefined,
             cons: v.cons ?? undefined,
-            status: v.status,
-            coupleId: v.coupleId,
-            createdAt: v.createdAt,
-        }))
-
-        const mappedBudgetItems = couple.budgetItems.map(b => ({
-            id: b.id,
-            category: b.category,
-            item: b.item,
-            amount: b.amount,
-            paidBy: b.paidBy,
-            coupleId: b.coupleId,
-            createdAt: b.createdAt,
-        }))
+        })
+        const mapBudgetItem = (b: any) => ({ ...b })
 
         const dashboardData: DashboardData = {
             weddingDate: couple.weddingDate ?? undefined,
             totalBudget,
             spentAmount,
             remainingBudget,
-            recentTodos: mappedTodos,
-            recentVendors: mappedVendors,
-            recentBudgetItems: mappedBudgetItems,
+            recentTodos: couple.todos.map(mapTodo),
+            recentVendors: couple.vendors.map(mapVendor),
+            recentBudgetItems: couple.budgetItems.map(mapBudgetItem),
         }
 
         return NextResponse.json({
