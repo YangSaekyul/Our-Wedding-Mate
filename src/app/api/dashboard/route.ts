@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({
                 success: true,
                 data: {
-                    weddingDate: null,
+                    weddingDate: undefined,
                     totalBudget: 0,
                     spentAmount: 0,
                     remainingBudget: 0,
@@ -55,14 +55,47 @@ export async function GET(request: NextRequest) {
             .reduce((sum, item) => sum + item.amount, 0)
         const remainingBudget = totalBudget - spentAmount
 
+        // Map Prisma nullable fields (Date | null, string | null, number | null) to our app types (undefined)
+        const mappedTodos = couple.todos.map(t => ({
+            id: t.id,
+            content: t.content,
+            dueDate: t.dueDate ?? undefined,
+            isCompleted: t.isCompleted,
+            coupleId: t.coupleId,
+            createdAt: t.createdAt,
+        }))
+
+        const mappedVendors = couple.vendors.map(v => ({
+            id: v.id,
+            name: v.name,
+            category: v.category,
+            contact: v.contact ?? undefined,
+            cost: v.cost ?? undefined,
+            pros: v.pros ?? undefined,
+            cons: v.cons ?? undefined,
+            status: v.status,
+            coupleId: v.coupleId,
+            createdAt: v.createdAt,
+        }))
+
+        const mappedBudgetItems = couple.budgetItems.map(b => ({
+            id: b.id,
+            category: b.category,
+            item: b.item,
+            amount: b.amount,
+            paidBy: b.paidBy,
+            coupleId: b.coupleId,
+            createdAt: b.createdAt,
+        }))
+
         const dashboardData: DashboardData = {
-            weddingDate: couple.weddingDate,
+            weddingDate: couple.weddingDate ?? undefined,
             totalBudget,
             spentAmount,
             remainingBudget,
-            recentTodos: couple.todos,
-            recentVendors: couple.vendors,
-            recentBudgetItems: couple.budgetItems,
+            recentTodos: mappedTodos,
+            recentVendors: mappedVendors,
+            recentBudgetItems: mappedBudgetItems,
         }
 
         return NextResponse.json({
