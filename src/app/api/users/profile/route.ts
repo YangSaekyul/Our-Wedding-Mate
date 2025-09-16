@@ -26,7 +26,7 @@ export async function GET() {
     return new NextResponse(JSON.stringify({
       email: user.email,
       name: user.name,
-      partner_name: user.couple?.partnerName || '',
+      partner_name: user.couple?.partner_name || '',
       wedding_date: user.couple?.weddingDate || '',
     }));
   } catch (error) {
@@ -69,7 +69,7 @@ export async function PUT(request: NextRequest) {
       await prisma.couple.update({
         where: { id: user.coupleId },
         data: {
-          partnerName: partner_name,
+          partner_name: partner_name,
           weddingDate: new Date(wedding_date),
         },
       });

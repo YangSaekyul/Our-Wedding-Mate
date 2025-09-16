@@ -23,7 +23,7 @@ model User {
 model Couple {
   id            String         @id @default(uuid())
   users         User[]
-  partnerName   String?
+  partner_name  String?
   weddingDate   DateTime?
   todos         Todo[]
   vendors       Vendor[]
