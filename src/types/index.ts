@@ -47,10 +47,21 @@ export interface UpdateTodoData {
 }
 
 // 업체 관련 타입
+export enum VendorCategory {
+    WEDDING_HALL = 'WEDDING_HALL',
+    STUDIO = 'STUDIO', 
+    DRESS = 'DRESS',
+    MAKEUP = 'MAKEUP',
+    BOUQUET = 'BOUQUET',
+    INVITATION = 'INVITATION',
+    HONEYMOON = 'HONEYMOON',
+    OTHER = 'OTHER'
+}
+
 export interface Vendor {
     id: string
     name: string
-    category: string
+    category: VendorCategory
     contact?: string
     cost?: number
     pros?: string
@@ -62,7 +73,7 @@ export interface Vendor {
 
 export interface CreateVendorData {
     name: string
-    category: string
+    category: VendorCategory | string
     contact?: string
     cost?: number
     pros?: string
@@ -72,7 +83,7 @@ export interface CreateVendorData {
 
 export interface UpdateVendorData {
     name?: string
-    category?: string
+    category?: VendorCategory | string
     contact?: string
     cost?: number
     pros?: string

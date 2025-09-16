@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireAuth } from '@/lib/middleware'
-import { CreateVendorData } from '@/types'
+import { CreateVendorData, VendorCategory } from '@/types'
 
 export async function GET(request: NextRequest) {
     try {
@@ -62,10 +62,39 @@ export async function POST(request: NextRequest) {
             )
         }
 
+        // 카테고리 문자열을 enum 값으로 변환
+        let vendorCategory: VendorCategory
+        switch (category.toLowerCase()) {
+            case '웨딩홀':
+                vendorCategory = VendorCategory.WEDDING_HALL
+                break
+            case '스튜디오':
+                vendorCategory = VendorCategory.STUDIO
+                break
+            case '드레스':
+                vendorCategory = VendorCategory.DRESS
+                break
+            case '메이크업':
+            case '헤어':
+                vendorCategory = VendorCategory.MAKEUP
+                break
+            case '꽃':
+                vendorCategory = VendorCategory.BOUQUET
+                break
+            case '청첩장':
+                vendorCategory = VendorCategory.INVITATION
+                break
+            case '신혼여행':
+                vendorCategory = VendorCategory.HONEYMOON
+                break
+            default:
+                vendorCategory = VendorCategory.OTHER
+        }
+
         const vendor = await prisma.vendor.create({
             data: {
                 name,
-                category,
+                category: vendorCategory,
                 contact,
                 cost,
                 pros,
