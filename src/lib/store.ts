@@ -6,6 +6,8 @@ interface User {
     email: string
     name: string
     coupleId?: string
+    partner_name?: string
+    wedding_date?: string
 }
 
 interface AuthState {

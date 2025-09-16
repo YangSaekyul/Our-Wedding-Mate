@@ -10,6 +10,7 @@ const navigation = [
     { name: '업체 관리', href: '/vendors', icon: '🏢' },
     { name: '예산 관리', href: '/budget', icon: '💰' },
     { name: '위시리스트', href: '/wishlist', icon: '🎁' },
+    { name: '마이페이지', href: '/profile', icon: '👤' },
 ]
 
 export default function Sidebar() {
